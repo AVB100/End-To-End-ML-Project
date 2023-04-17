@@ -3,7 +3,6 @@ import sys
 from dataclasses import dataclass
 from sklearn.ensemble import AdaBoostRegressor, GradientBoostingRegressor, RandomForestRegressor
 from sklearn.linear_model import LinearRegression
-from sklearn.neighbors import KNeighborsRegressor
 from sklearn.tree import DecisionTreeRegressor
 from xgboost import XGBRegressor
 from sklearn.metrics import r2_score
@@ -29,6 +28,8 @@ class ModelTrainer:
                 test_array[:, :-1],
                 test_array[:, -1]
             )
+            
+            # Define models and their respective hyperparameters
             models = {
                 "Random Forest": RandomForestRegressor(),
                 "Decision Tree": DecisionTreeRegressor(),
@@ -39,33 +40,34 @@ class ModelTrainer:
             }
 
             params = {
-                    "Decision Tree": {
-                        'criterion':['squared_error', 'friedman_mse', 'absolute_error', 'poisson'],
-                    },
+                "Decision Tree": {
+                    'criterion':['squared_error', 'friedman_mse', 'absolute_error', 'poisson'],
+                },
 
-                    "Random Forest":{
-                        'n_estimators': [8, 16, 32, 64, 128, 256]
-                    },
+                "Random Forest":{
+                    'n_estimators': [8, 16, 32, 64, 128, 256]
+                },
 
-                    "Gradient Boosting":{
-                        'learning_rate':[.1, .01, .05, .001],
-                        'subsample':[0.6, 0.7, 0.75, 0.8, 0.85, 0.9],
-                        'n_estimators': [8, 16, 32, 64, 128, 256]
-                    },
+                "Gradient Boosting":{
+                    'learning_rate':[.1, .01, .05, .001],
+                    'subsample':[0.6, 0.7, 0.75, 0.8, 0.85, 0.9],
+                    'n_estimators': [8, 16, 32, 64, 128, 256]
+                },
 
-                    "Linear Regression":{},
+                "Linear Regression":{},
 
-                    "XGB Classifier":{
-                        'learning_rate':[.1, .01, .05, .001],
-                        'n_estimators': [8, 16, 32, 64, 128, 256]
-                    },
+                "XGB Classifier":{
+                    'learning_rate':[.1, .01, .05, .001],
+                    'n_estimators': [8, 16, 32, 64, 128, 256]
+                },
 
-                    "AdaBoost Classifier":{
-                        'learning_rate':[.1, .01, 0.5, .001],
-                        'n_estimators': [8, 16, 32, 64, 128, 256]
-                    }
+                "AdaBoost Classifier":{
+                    'learning_rate':[.1, .01, 0.5, .001],
+                    'n_estimators': [8, 16, 32, 64, 128, 256]
+                }
             }
 
+            # Evaluate models and get best performing model
             model_report:dict = evaluate_model(x_train=x_train, y_train=y_train, x_test=x_test, y_test=y_test, models=models, params=params)
 
             best_model_score = max(sorted(model_report.values()))
@@ -79,11 +81,13 @@ class ModelTrainer:
             
             logging.info("Found best model on both testing and training dataset")
 
+            # Save best model as a pickle file
             save_object(
                 file_path=self.model_trainer_config.trained_model_file_path,
                 obj=best_model
             )
 
+            # Predict on test data using best model and calculate R2 score
             predicted=best_model.predict(x_test)
             r2_score_value = r2_score(y_test, predicted)
             return r2_score_value

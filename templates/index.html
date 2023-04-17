@@ -1,43 +1,55 @@
 <!DOCTYPE html>
 <html>
-
-<head>
-    <title>Landing Page</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            background-color: #f2f8ff;
-            background-image: url('background.jpg'); /* Add background image */
-            background-size: cover;
-            background-position: center;
-        }
-        .container {
-            max-width: 960px;
-            margin: 0 auto;
-            padding: 40px;
-            text-align: center;
-        }
-        .logo {
-            font-size: 48px; /* Increase font size for logo */
-            font-weight: bold;
-            color: #3b8cff;
-        }
-        .tagline {
-            font-size: 24px; /* Increase font size for tagline */
-            color: #607d8b;
-            margin-top: 20px;
-        }
-    </style>
-
-</head>
-
-<body>
-    <div class="container">
-        <h1 class="logo">Score Predictor</h1>
-        <p class="tagline">Predict student scores with accuracy</p>
-    </div>
-</body>
-
+    <head>
+        <title>Landing Page</title>
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+                font-family: Arial, sans-serif;
+                background-color: #f2f8ff;
+                background-image: url('background.jpg'); /* Add background image */
+                background-size: cover;
+                background-position: center;
+            }
+            .container {
+                max-width: 960px;
+                margin: 0 auto;
+                padding: 40px;
+                text-align: center;
+            }
+            .logo {
+                font-size: 48px; /* Increase font size for logo */
+                font-weight: bold;
+                color: #3b8cff;
+            }
+            .tagline {
+                font-size: 24px; /* Increase font size for tagline */
+                color: #607d8b;
+                margin-top: 20px;
+            }
+            .btn {
+                display: inline-block;
+                padding: 12px 24px;
+                margin-top: 20px;
+                font-size: 18px;
+                font-weight: bold;
+                color: #fff;
+                background-color: #3b8cff;
+                text-decoration: none;
+                border: none;
+                cursor: pointer;
+            }
+            .btn:hover {
+                background-color: #2a73e6;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1 class="logo">Score Predictor</h1>
+            <p class="tagline">Predict student scores with accuracy</p>
+            <a href="/predictdata" class="btn">Go to Prediction</a> 
+        </div>
+    </body>
 </html>

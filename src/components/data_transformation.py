@@ -13,7 +13,7 @@ from src.utils import save_object
 
 @dataclass
 class DataTransformationConfig:
-    preprocessor_obj_file_path = os.path.join('artifacts',"preprocessor.pkl")
+    preprocessor_obj_file_path = os.path.join('artifacts', "preprocessor.pkl")
 
 class DataTransformation:
     def __init__(self):
@@ -21,6 +21,7 @@ class DataTransformation:
 
     def get_data_transformer_object(self):
         try:
+            # Define numerical and categorical columns
             numerical_columns = ["writing score", "reading score"]
             categorical_columns = [
                 "gender",
@@ -29,12 +30,16 @@ class DataTransformation:
                 "lunch",
                 "test preparation course",
             ]
+            
+            # Create numerical pipeline with SimpleImputer and StandardScaler
             num_pipeline = Pipeline(
                 steps = [
                     ("imputer",SimpleImputer(strategy="median")),
                     ("scaler",StandardScaler())
                 ]
             )
+            
+            # Create categorical pipeline with SimpleImputer, OneHotEncoder, and StandardScaler
             cat_pipeline = Pipeline(
                 steps = [
                     ("imputer",SimpleImputer(strategy="most_frequent")),
@@ -42,20 +47,25 @@ class DataTransformation:
                     ("scaler",StandardScaler(with_mean=False))
                 ]
             )
+            
             logging.info(f"Categorical columns: {categorical_columns}")
             logging.info(f"Numerical columns: {numerical_columns}")
+            
+            # Create ColumnTransformer object with numerical and categorical pipelines
             preprocessor = ColumnTransformer(
                 [
                     ("num_pipeline",num_pipeline,numerical_columns),
                     ("cat_pipelines",cat_pipeline,categorical_columns)
                 ]
             )
+            
             return preprocessor
         except Exception as e:
             raise CustomException(e,sys)
         
     def initiate_data_transformation(self,train_path,test_path):
         try:
+            # Read train and test data
             train_df = pd.read_csv(train_path)
             test_df = pd.read_csv(test_path)
 
@@ -68,16 +78,17 @@ class DataTransformation:
             target_column_name = "math score"
             numerical_columns = ["writing score", "reading score"]
 
-            input_feature_train_df = train_df.drop(columns=[target_column_name],axis=1)
+            input_feature_train_df = train_df.drop(columns=[target_column_name], axis=1)
             target_feature_train_df = train_df[target_column_name]
 
-            input_feature_test_df = test_df.drop(columns=[target_column_name],axis=1)
+            input_feature_test_df = test_df.drop(columns=[target_column_name], axis=1)
             target_feature_test_df = test_df[target_column_name]
 
             logging.info(
                 f"Applying preprocessing object on training dataframe and testing dataframe."
             )
 
+            # Apply preprocessor on training and testing dataframes
             input_feature_train_arr = preprocessing_obj.fit_transform(input_feature_train_df)
             input_feature_test_arr = preprocessing_obj.transform(input_feature_test_df)
 

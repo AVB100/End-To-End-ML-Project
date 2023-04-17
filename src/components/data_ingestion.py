@@ -3,12 +3,10 @@ import sys
 from src.exception import CustomException
 from src.logger import logging
 import pandas as pd
-
 from sklearn.model_selection import train_test_split
 from dataclasses import dataclass
-
-from src.components.data_transformation import DataTransformation, DataTransformationConfig
-from src.components.model_trainer import ModelTrainerConfig, ModelTrainer
+from src.components.data_transformation import DataTransformation
+from src.components.model_trainer import ModelTrainer
 
 @dataclass
 class DataIngestionConfig:
@@ -19,18 +17,25 @@ class DataIngestionConfig:
 class DataIngestion:
     def __init__(self):
         self.ingestion_config = DataIngestionConfig()
-    
+
     def initiate_data_ingestion(self):
         logging.info("Entered the data ingestion method or component")
         try:
+            # Read the dataset as a dataframe
             df = pd.read_csv("notebook/data/exams.csv")
             logging.info("Read the dataset as a dataframe")
 
+            # Create the directory for train/test data files if not exists
             os.makedirs(os.path.dirname(self.ingestion_config.train_data_path), exist_ok=True)
+
+            # Save the raw data to a CSV file
             df.to_csv(self.ingestion_config.raw_data_path, index=False, header=True)
             logging.info("Train test split initiated")
 
+            # Perform train-test split
             train_set, test_set = train_test_split(df, test_size=0.2, random_state=42)
+
+            # Save the train and test data to separate CSV files
             train_set.to_csv(self.ingestion_config.train_data_path, index=False, header=True)
             test_set.to_csv(self.ingestion_config.test_data_path, index=False, header=True)
             logging.info("Ingestion of the data is completed")
@@ -40,12 +45,19 @@ class DataIngestion:
                 self.ingestion_config.test_data_path,
             )
         except Exception as e:
+            # Raise a custom exception with error details
             raise CustomException(e, sys)
-        
+
 if __name__ == "__main__":
+    # Initialize DataIngestion object
     obj = DataIngestion()
+    # Perform data ingestion and get train/test data file paths
     train_data, test_data = obj.initiate_data_ingestion()
-    data_tranformation = DataTransformation()
-    train_arr, test_arr, _ = data_tranformation.initiate_data_transformation(train_data, test_data)
-    modeltrainer = ModelTrainer()
-    print(modeltrainer.initiate_model_trainer(train_arr, test_arr))
+    # Initialize DataTransformation object
+    data_transformation = DataTransformation()
+    # Perform data transformation
+    train_arr, test_arr, _ = data_transformation.initiate_data_transformation(train_data, test_data)
+    # Initialize ModelTrainer object
+    model_trainer = ModelTrainer()
+    # Print the result of model training
+    print(model_trainer.initiate_model_trainer(train_arr, test_arr))
